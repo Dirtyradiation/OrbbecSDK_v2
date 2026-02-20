@@ -106,7 +106,16 @@ switch($vsversion){
  }
 }
 $cmake_generator = "Visual Studio ${vsversion} ${year}"
+$toolset = ""
+switch($vsversion){
+  15 {$toolset = "v141"}
+  16 {$toolset = "v142"}
+  17 {$toolset = "v143"}
+  18 {$toolset = "v144"}
+  default {$toolset = "v141"}
+}
 Write-Output  "Using $cmake_generator as cmake generator"
+Write-Output  "Using toolset: $toolset"
 
 $build_dir = "build_$fullPlatform"
 # create build directory
@@ -179,7 +188,7 @@ if (-not $opencvPath -or -not (Test-Path $opencvLibPath)) {
 # build and install
 cmake -G "$cmake_generator" `
     -A "$platform" `
-    -T "v141,host=${targetArch}" `
+    -T "${toolset},host=${targetArch}" `
     -DCMAKE_BUILD_TYPE=$buildType `
     -DCMAKE_INSTALL_PREFIX="${install_dir}" `
     -DOPEN_SDK_LIB_NAME="$sdkLibName" `
